@@ -1,0 +1,16 @@
+{
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "microservices/*",
+      "modules/*"
+    ]
+  },
+  "scripts": {
+    "build:control": "docker build -t control --build-arg BUILD_CONTEXT=control .",
+    "run:control": "docker run -p 3001:3001 --name node-msc_control control",
+    "clean:nodemodules": "rm -rf node_modules && rm -rf **/node_modules && rm -rf **/**/node_modules"
+  },
+  "dependencies": {
+  }
+}

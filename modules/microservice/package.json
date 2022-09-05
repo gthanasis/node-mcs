@@ -1,0 +1,25 @@
+{
+  "name": "microservice",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc --build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^4.7.3"
+  },
+  "dependencies": {
+    "dd-trace": "^0.35.0",
+    "dotenv": "^16.0.1",
+    "eslint-config-custom": "*",
+    "express": "^4.17.1",
+    "express-form-data": "^2.0.16",
+    "logger": "*",
+    "method-override": "^3.0.0",
+    "source-map-support": "^0.5.21"
+  }
+}
