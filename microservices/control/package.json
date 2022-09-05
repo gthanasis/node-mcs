@@ -10,7 +10,9 @@
     "build": "tsc --build tsconfig.json",
     "lint": "eslint src --ext .ts -c .eslintrc",
     "start": "node dist/index.js",
-    "dev": "ts-node-dev --exit-child --transpile-only src/index.ts"
+    "dev": "ts-node-dev --exit-child --transpile-only src/index.ts",
+    "test:watch": "mocha -r source-map-support/register -r ts-node/register --extension ts --recursive -w -b tests",
+    "test": "mocha -r ts-node/register --extension ts --recursive --exit tests"
   },
   "dependencies": {
     "library": "*",
