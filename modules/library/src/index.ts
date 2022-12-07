@@ -14,7 +14,7 @@ import {
 import OauthTokenManagers from './oauthTokenManager'
 import InMemoryPersistence from './repositories/InMemoryPersistence'
 import IPersistence from './repositories/IPersistence'
-import MongoPersistence, { MongoPersistenceIdType } from './repositories/MongoPersistence'
+import PostgreSqlPersistence from './repositories/PostgreSqlPersistence'
 import Jwt from './libJWT'
 
 export {
@@ -33,10 +33,9 @@ export {
     FlowConsumer,
     RetryFlowConsumer,
     Producer,
-    MongoPersistence,
-    MongoPersistenceIdType,
     IPersistence,
     InMemoryPersistence,
-    Jwt
+    Jwt,
+    PostgreSqlPersistence
 }
 

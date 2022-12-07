@@ -12,3 +12,9 @@ Features:
 
 Basic commands can be found under root package.json
 
+## TODOs:
+
+- [ ] Rewrite mongo lib in modules -> library (Implementation can be in MongoPersistence)
+- [ ] Improve persistence interface
+- [ ] Add tests for library
+

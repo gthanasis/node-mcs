@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb'
-import IPersistence, { Query } from './IPersistence'
+import IPersistence, {Order, Pagination, Query} from './IPersistence'
 
 export default class InMemoryPersistence implements IPersistence {
     private dbCollection: any
@@ -14,7 +14,7 @@ export default class InMemoryPersistence implements IPersistence {
 
     // Find one by primary _id
     async find<T> (id: string): Promise<T> {
-        const document = this.dbCollection.find((entity: any) => { entity._id === id })
+        const document = this.dbCollection.find((entity: any) => entity._id === id)
         return document === undefined ? null : document
     }
 
@@ -25,44 +25,19 @@ export default class InMemoryPersistence implements IPersistence {
     }
 
     // Find all by query
-    async findAll<T> (where: Query): Promise<T> {
+    async findAll<T> (where: Query): Promise<T[]> {
         const documents = this.dbCollection.filter((entity: any) => this.matches(entity, where))
         return documents
     }
 
-    async create<T> (modelInstances: any | any[]): Promise<T[]> {
-        try {
-            if (modelInstances === null || modelInstances === undefined) {
-                throw Error('Cannot save empty document')
-            }
+    async count (where: Query[], table: string, order?: Order, pagination?: Pagination): Promise<number> {
+        const documents = this.dbCollection.filter((entity: any) => this.matches(entity, where))
+        return documents.length
+    }
 
-            if (Array.isArray(modelInstances) && modelInstances.length === 0) {
-                throw Error('Cannot save empty document')
-            }
-
-            if (Object.getPrototypeOf(modelInstances) === Object.prototype && Object.keys(modelInstances).length === 0) {
-                throw Error('Cannot save empty document')
-            }
-
-            const saveable = Array.isArray(modelInstances) ? modelInstances : [modelInstances]
-            saveable.forEach(entity => {
-                if (entity.hasOwnProperty('_id')) {
-                    entity._id = new ObjectId(entity._id)
-                } else {
-                    entity._id = new ObjectId()
-                }
-
-                entity.createdDate = new Date(Date.now())
-                entity.updatedDate = new Date(Date.now())
-            })
-
-            this.dbCollection = this.dbCollection.concat(saveable)
-
-            return saveable
-        } catch (e: any) {
-            console.log('error', e.message)
-            return []
-        }
+    async create<T> (modelInstances: any): Promise<T> {
+        this.dbCollection = this.dbCollection.concat(modelInstances)
+        return modelInstances
     }
 
     async update<T> (attributes: any, where: Query): Promise<T[]> {
@@ -112,7 +87,7 @@ export default class InMemoryPersistence implements IPersistence {
         return null
     }
 
-    async destroy<T> (where: Query): Promise<T[]> {
+    async delete<T> (where: Query): Promise<T[]> {
         const newCollection = this.dbCollection.filter((entity: any) => !this.matches(entity, where))
         const deleteables = this.dbCollection.filter((entity: any) => this.matches(entity, where))
         this.dbCollection = newCollection
@@ -128,5 +103,17 @@ export default class InMemoryPersistence implements IPersistence {
         return Object.keys(where).every((key: string) => {
             return where[key] === entity[key]
         })
+    }
+
+    async connect () {
+        return Promise.resolve()
+    }
+
+    async disconnect () {
+        return Promise.resolve()
+    }
+
+    directQuery<T> (text: string, values: string[]): Promise<T[]> {
+        return Promise.resolve([])
     }
 }

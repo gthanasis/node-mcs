@@ -37,7 +37,7 @@ export class Logger {
         })
     }
 
-    detach () {
+    detach (): BunyanLogger {
         return this.logger
     }
 }

@@ -6,8 +6,10 @@ import methodOverride from 'method-override'
 import {Server} from 'http'
 import process from 'process'
 import {BunyanLogger} from 'logger'
+import AsyncErrorHandler from './AsyncErrorHandler'
+import cors from 'cors'
 
-type ServiceConstructorProps = {
+export type ServiceConstructorProps = {
     logger: BunyanLogger
     port: number
     name: string
@@ -97,6 +99,7 @@ class AbstractService {
         }
         if (optFormParseData) this.app.use(formData.parse())
         if (optBodyText) this.app.use(express.text())
+        this.app.use(cors({ origin: '*' }))
     }
 
     /**
@@ -209,8 +212,18 @@ class AbstractService {
 
     protected errorBoundary (err, req, res, next): void {
         if (err) {
+            const errorType = err.type
+            let message = `Something went wrong.`
+            let code = 500
+            switch (errorType) {
+                case 'operational':
+                    message = err.message
+                    code = err.code
+                    break
+            }
+            if (err.original) err.message += `\noriginal:\n ${err.original.message}`
             this.logger.error({ err })
-            res.status(500).json({ error: 'Something went wrong.' })
+            res.status(code).json({ error: message })
         }
     }
 
@@ -263,3 +276,4 @@ class AbstractService {
 }
 
 export default AbstractService
+export { AsyncErrorHandler }
