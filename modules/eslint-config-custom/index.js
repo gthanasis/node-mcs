@@ -133,7 +133,7 @@
         'no-useless-rename': 2,
         'no-whitespace-before-property': 2,
         'no-with': 2,
-        'max-len': ['warn', 127, { 'ignoreUrls': true, 'ignoreComments': true, 'ignoreTrailingComments': true, 'ignoreStrings': true, 'ignoreTemplateLiterals': true, 'ignoreRegExpLiterals': true }],
+        'max-len': ['warn', 250, { 'ignoreUrls': true, 'ignoreComments': true, 'ignoreTrailingComments': true, 'ignoreStrings': true, 'ignoreTemplateLiterals': true, 'ignoreRegExpLiterals': true }],
         'object-property-newline': [2, { 'allowMultiplePropertiesPerLine': true }],
         'one-var': [2, { 'initialized': 'never' }],
         'operator-linebreak': [2, 'after', { 'overrides': { '?': 'before', ':': 'before' } }],

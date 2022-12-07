@@ -17,4 +17,6 @@ Basic commands can be found under root package.json
 - [ ] Rewrite mongo lib in modules -> library (Implementation can be in MongoPersistence)
 - [ ] Improve persistence interface
 - [ ] Add tests for library
+- [ ] Persistence layers should throw specific errors for common use cases (duplicate, constraint, etc)
+- [ ] Add linting to build process (fail quicker)
 
