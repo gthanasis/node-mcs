@@ -1,0 +1,10 @@
+version: "3.3"
+services:
+  control-backend:
+    build:
+      context: .
+      args:
+        BUILD_CONTEXT: control
+    ports:
+      - "3001:3001"
+    env_file: microservices/control/docker.env

@@ -7,12 +7,12 @@
   "scripts": {
     "clean": "rm -rf dist",
     "prebuild": "npm run clean && npm run lint",
-    "build": "tsc --build tsconfig.json",
+    "build": "tsc --build tsconfig.build.json",
     "lint": "eslint src --ext .ts -c .eslintrc",
     "start": "node dist/index.js",
-    "dev": "ts-node-dev --exit-child --transpile-only src/index.ts",
-    "test:watch": "mocha -r source-map-support/register -r ts-node/register --extension ts --recursive -w -b tests",
-    "test": "mocha -r ts-node/register --extension ts --recursive --exit tests"
+    "dev": "TS_NODE_PROJECT='./tsconfig.build.json' ts-node-dev --exit-child --transpile-only src/index.ts",
+    "test:watch": "TS_NODE_PROJECT='./tsconfig.tests.json' mocha -r source-map-support/register -r ts-node/register --extension ts --recursive -w -b tests",
+    "test": "TS_NODE_PROJECT='./tsconfig.tests.json' mocha -r ts-node/register --extension ts --recursive --exit tests"
   },
   "dependencies": {
     "library": "*",
