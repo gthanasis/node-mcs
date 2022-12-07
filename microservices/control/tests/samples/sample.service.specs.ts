@@ -7,12 +7,11 @@ import {InMemoryPersistence} from 'library'
 import {ISample, ISampleDAO, WithID} from 'project-types'
 
 describe('Sample service', () => {
-    const sampleInDb: WithID<ISampleDAO> & { _id: string } = {
+    const sampleInDb: ISampleDAO & { _id: string } = {
         _id: '1',
-        id: '1',
         name: 'test',
         date: 'test',
-        example_field: 'test'
+        exampleField: 'test'
     }
     const sampleInJSON: ISample = {
         id: '1',
@@ -23,29 +22,29 @@ describe('Sample service', () => {
 
     it('[create] Should create a sample with the correct data', async () => {
         const logger: BunyanLogger = new Logger({name: 'test', level: 'FATAL'}).detach()
-        const persistence: InMemoryPersistence = new InMemoryPersistence({ 'e': [] }, 'e')
+        const persistence: InMemoryPersistence = new InMemoryPersistence(['samples'])
 
         const service = new SampleService(persistence, logger)
         await service.create(sampleInJSON)
-        const res = await persistence.findAll<ISampleDAO>({})
+        const res = await persistence.findAll<ISampleDAO>([{}], 'samples')
         assert.deepEqual(res[0].name, 'test')
     })
 
     it('[get] Should return a sample formated in JSON when it exists', async () => {
         const logger: BunyanLogger = new Logger({name: 'test', level: 'FATAL'}).detach()
-        const persistence: InMemoryPersistence = new InMemoryPersistence({ 'e': [] }, 'e')
+        const persistence: InMemoryPersistence = new InMemoryPersistence(['samples'])
 
         const service = new SampleService(persistence, logger)
         // NOTE: double id is due to InMemoryPersistence way of storing ids
         // TODO: we should maybe provide the transformers to separate the logic correctly
-        await persistence.create<ISampleDAO>(sampleInDb)
+        await persistence.create<ISampleDAO>(sampleInDb, 'samples')
         const sample = await service.get('1')
         assert.deepEqual<any>(sample, sampleInJSON)
     })
 
     it('[get] Should throw when sample does not exist', async () => {
         const logger: BunyanLogger = new Logger({name: 'test', level: 'FATAL'}).detach()
-        const persistence: InMemoryPersistence = new InMemoryPersistence({ 'e': [] }, 'e')
+        const persistence: InMemoryPersistence = new InMemoryPersistence(['samples'])
 
         const service = new SampleService(persistence, logger)
         try {
@@ -57,18 +56,18 @@ describe('Sample service', () => {
 
     it('[patch] Should update when sample exists', async () => {
         const logger: BunyanLogger = new Logger({name: 'test', level: 'FATAL'}).detach()
-        const persistence: InMemoryPersistence = new InMemoryPersistence({ 'e': [] }, 'e')
+        const persistence: InMemoryPersistence = new InMemoryPersistence(['samples'])
 
-        await persistence.create<ISampleDAO>(sampleInDb)
+        await persistence.create<ISampleDAO>(sampleInDb, 'samples')
         const service = new SampleService(persistence, logger)
         await service.update('1', { name: 'test1' })
-        const sample = await persistence.find<ISampleDAO>('1')
+        const sample = await persistence.find<ISampleDAO>('1', 'samples')
         assert.deepEqual(sample.name, 'test1')
     })
 
     it('[patch] Should throw when sample does not exist', async () => {
         const logger: BunyanLogger = new Logger({name: 'test', level: 'FATAL'}).detach()
-        const persistence: InMemoryPersistence = new InMemoryPersistence({ 'e': [] }, 'e')
+        const persistence: InMemoryPersistence = new InMemoryPersistence(['samples'])
 
         const service = new SampleService(persistence, logger)
         try {
@@ -80,7 +79,7 @@ describe('Sample service', () => {
 
     it('[delete] Should throw when sample does not exist', async () => {
         const logger: BunyanLogger = new Logger({name: 'test', level: 'FATAL'}).detach()
-        const persistence: InMemoryPersistence = new InMemoryPersistence({ 'e': [] }, 'e')
+        const persistence: InMemoryPersistence = new InMemoryPersistence(['samples'])
 
         const service = new SampleService(persistence, logger)
         try {
@@ -92,12 +91,12 @@ describe('Sample service', () => {
 
     it('[delete] Should delete when sample exists', async () => {
         const logger: BunyanLogger = new Logger({name: 'test', level: 'FATAL'}).detach()
-        const persistence: InMemoryPersistence = new InMemoryPersistence({ 'e': [] }, 'e')
+        const persistence: InMemoryPersistence = new InMemoryPersistence(['samples'])
 
-        await persistence.create<ISampleDAO>({ _id: '1', id: '1', name: 'test', uuid: '1' })
+        const sampleCreated = await persistence.create<ISampleDAO>({ name: 'test' }, 'samples')
         const service = new SampleService(persistence, logger)
-        await service.delete('1')
-        const sample = await persistence.find<ISampleDAO>('1')
+        await service.delete(sampleCreated._id!)
+        const sample = await persistence.find<ISampleDAO>('1', 'samples')
         assert.deepEqual(sample, null)
     })
 })

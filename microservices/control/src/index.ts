@@ -4,12 +4,12 @@ import 'dotenv/config'
 import {Logger, BunyanLogger} from 'logger'
 import samples from './routes/samples'
 
-import {RankingMsc} from './service'
+import {SampleMsc} from './service'
 
 const name = process.env.SERVER_NAME || 'backend'
 const logger: BunyanLogger = new Logger({name: name, level: process.env.LOG_LEVEL}).detach()
 
-const msc = new RankingMsc(
+const msc = new SampleMsc(
     {
         env: process.env.NODE_ENV || 'development',
         host: process.env.HOST || '0.0.0.0',

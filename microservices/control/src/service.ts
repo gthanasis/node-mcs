@@ -1,16 +1,14 @@
 import 'dotenv/config'
 import Microservice, { ServiceConstructorProps } from 'microservice'
 
-import { PostgreSqlPersistence } from 'library'
+import {InMemoryPersistence} from 'library'
 
-export class RankingMsc extends Microservice {
-    public persistence: PostgreSqlPersistence
+export class SampleMsc extends Microservice {
+    public persistence: InMemoryPersistence
 
     constructor (props: ServiceConstructorProps) {
         super(props)
-        this.persistence = new PostgreSqlPersistence({
-            connectionString: process.env.PG_CONNECTION_STRING as string
-        })
+        this.persistence = new InMemoryPersistence(['samples'])
     }
 
     protected async createConnections (): Promise<void> {

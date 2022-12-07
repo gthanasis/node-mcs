@@ -1,5 +1,6 @@
 import { Pool } from 'pg'
 import IPersistence, {Order, Pagination, Query} from './IPersistence'
+import Utils from './utlis'
 
 type PgConstructorProps = {
     connectionString: string
@@ -16,7 +17,7 @@ class PostgreSqlPersistence implements IPersistence {
     }
 
     // Find one by primary _id
-    async find<T> (id: string, table: string): Promise<T> {
+    async find<T> (id: string, table: string): Promise<T | null> {
         const query = {
             text: `SELECT * FROM ${table} WHERE id=$1 LIMIT 1`,
             values: [id]
@@ -28,7 +29,7 @@ class PostgreSqlPersistence implements IPersistence {
     }
 
     // Find one by query
-    async findBy<T> (where: Query, table): Promise<T> {
+    async findBy<T> (where: Query, table): Promise<T | null> {
         let whereClause = ``
         const whereValues: string[] = []
 
@@ -51,7 +52,7 @@ class PostgreSqlPersistence implements IPersistence {
     // Find all by query
     // [{ id: 1, name: 'a' }, { id: 2, name: 'b' }, { id: 3 }]
     async findAll<T> (where: Query[], table: string, order?: Order, pagination?: Pagination, search?: string): Promise<T[]> {
-        const normalizedQuery = this.normalizeQuery(where)
+        const normalizedQuery = Utils.normalizeQuery(where)
         const normalizedQueryOr: Record<string, string> = {}
 
         for (const key in normalizedQuery) {
@@ -80,7 +81,7 @@ class PostgreSqlPersistence implements IPersistence {
         let qText = `SELECT * FROM ${table}`
 
         if (search) {
-            whereClause.push(` (name ILIKE '%${search}%' OR surname ILIKE '%${search}%' OR agm ILIKE '%${search}%') `)
+            whereClause.push(` (name ILIKE '%${search}%') `)
         }
 
         if (whereClause.length > 0) qText += ` WHERE ${whereClause.join(' AND ')}`
@@ -90,14 +91,14 @@ class PostgreSqlPersistence implements IPersistence {
 
         const query = { text: qText, values: whereValues }
 
-        console.log(`FindAll query`, query)
+        // console.log(`FindAll query`, query)
         const res = await this.pool.query(query)
         // console.log(`FindAll response`, res)
         return res.rows
     }
 
     async count (where: Query[], table: string, order?: Order, pagination?: Pagination): Promise<number> {
-        const normalizedQuery = this.normalizeQuery(where)
+        const normalizedQuery = Utils.normalizeQuery(where)
         const normalizedQueryOr: Record<string, string> = {}
 
         for (const key in normalizedQuery) {
@@ -146,6 +147,7 @@ class PostgreSqlPersistence implements IPersistence {
 
         // console.log(`Create query`, query)
         const res = await this.pool.query(query)
+        if (res.rows.length < 1) throw new Error(`Could not create model, ${JSON.stringify(modelInstances)}`)
         // console.log(`Create response`, res)
 
         return res.rows[0]
@@ -187,7 +189,7 @@ class PostgreSqlPersistence implements IPersistence {
     }
 
     async directQuery<T> (text: string, values: string[]): Promise<T[]> {
-        console.log({ text, values })
+        // console.log({ text, values })
         const res = await this.pool.query({ text, values })
         return res.rows
     }
@@ -223,30 +225,6 @@ class PostgreSqlPersistence implements IPersistence {
 
     async disconnect () {
         return this.pool.end()
-    }
-
-    private normalizeQuery (predicateList: Query[]): Record<string, string[]> {
-        const queryKeySet = new Set(
-            predicateList
-            .flatMap((predicate) => {
-                return Object.keys(predicate)
-                .filter((predicateKey) => predicate[predicateKey] !== undefined)
-            })
-        )
-
-        const results: Record<string, string[]> = {}
-        queryKeySet.forEach((key: string) => {
-            predicateList.forEach((predicate: Query) => {
-                if (predicate[key]) { // value is not undefined
-                    if (!results.hasOwnProperty(key)) { // key exists in results
-                        results[key] = [predicate[key]]
-                    } else {
-                        if (results[key].indexOf(predicate[key]) === -1) results[key].push(predicate[key])
-                    }
-                }
-            })
-        })
-        return results
     }
 }
 

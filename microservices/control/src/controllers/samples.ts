@@ -1,10 +1,10 @@
-import {RankingMsc} from '../service'
+import {SampleMsc} from '../service'
 import Express from 'express'
 import SampleService from '../services/SampleService'
 import {IPersistence} from 'library'
 import {BunyanLogger} from 'logger'
 
-const SampleController = (msc: RankingMsc): Record<string, unknown> => {
+const SampleController = (msc: SampleMsc): Record<string, unknown> => {
     const persistence: IPersistence = msc.persistence
     const logger: BunyanLogger = msc.logger
     const service = new SampleService(persistence, logger)

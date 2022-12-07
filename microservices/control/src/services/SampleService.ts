@@ -29,7 +29,7 @@ export default class SampleService {
 
     async get (id: string): Promise<Partial<IEntity> | undefined> {
         const res = await this.persistence.find<IEntityDAO>(id, this.persitenceScope)
-        if (!res) throw new ResourceNotFoundError()
+        if (res === null) throw new ResourceNotFoundError()
         return toJSON(res)
     }
 

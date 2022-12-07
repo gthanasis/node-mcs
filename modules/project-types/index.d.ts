@@ -8,10 +8,10 @@ export interface ISample {
 }
 
 export interface ISampleDAO {
-    id?: string
+    _id?: string
     name: string
     date: string
-    example_field: string
+    exampleField: string
 }
 
 export { WithID }

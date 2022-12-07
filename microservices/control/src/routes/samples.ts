@@ -1,12 +1,12 @@
 import {Router} from 'express'
-import {RankingMsc} from '../service'
+import {SampleMsc} from '../service'
 import {SampleController} from '../controllers/samples'
 import {AsyncErrorHandler} from 'microservice'
 import bodyValidator from '../middlewares/bodyValidator'
 import {SampleJsonSchema} from '../models/Sample'
 import paginationQueryParams from '../middlewares/paginationQueryParams'
 
-export default (msc: RankingMsc): Router => {
+export default (msc: SampleMsc): Router => {
     const router = Router()
     const controller = SampleController(msc)
 
