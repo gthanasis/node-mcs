@@ -1,4 +1,4 @@
-name: Node API
+name: Control MSC build pipeline
 on:
   pull_request:
     branches: [ "main" ]

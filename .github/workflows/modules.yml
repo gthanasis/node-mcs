@@ -1,4 +1,4 @@
-name: Node API
+name: Modules lib build pipeline
 on:
   pull_request:
     branches: [ "main" ]
