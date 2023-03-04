@@ -1,0 +1,33 @@
+name: Node API
+on:
+  pull_request:
+    branches: [ "main" ]
+    paths: [ "microservices/control", ".github/**" ]
+jobs:
+  test_and_build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - name: Install dependencies
+        working-directory: .
+        run: yarn ci
+
+      - name: Build modules
+        working-directory: ./modules
+        run: ./build.sh
+
+      - name: Test Control Microservice
+        working-directory: ./microsrvices/control
+        run: yarn test
+
+      - name: Build docker image
+        working-directory: ./
+        run: docker build -t control --build-arg BUILD_CONTEXT=control .
