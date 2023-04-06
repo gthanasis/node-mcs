@@ -6,8 +6,6 @@ on:
 jobs:
   test-build-control-msc:
     runs-on: ubuntu-latest
-    env:
-      ACTIONS_STEP_DEBUG: true
 
     steps:
       - name: Checkout code
@@ -30,13 +28,13 @@ jobs:
         working-directory: ./modules
         run: ./build.sh
 
-     - name: Check directory
-       working-directory: ./
-       run: ls
+      - name: Build modules
+        working-directory: ./modules
+        run: ./build.sh
 
-     - name: Check node modules
-       working-directory: ./node_modules
-       run: ls | grep 'library'
+      - name: Check directory
+        working-directory: ./
+        run: ls
 
       - name: Test Control Microservice
         working-directory: ./microservices/control
