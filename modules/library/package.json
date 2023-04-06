@@ -7,8 +7,8 @@
     "build": "tsc --build",
     "clean": "rm -rf dist",
     "lint": "eslint src --quiet --ext .js --fix",
-    "test:watch": "mocha -r ts-node/register --extension js,ts --recursive -w -b",
-    "test": "mocha -r ts-node/register --extension js,ts --recursive --exit"
+    "test:watch": "mocha -r ts-node/register --extension js,ts --recursive -w -b ./tests/",
+    "test": "mocha -r ts-node/register --extension js,ts --recursive --exit ./tests/"
   },
   "devDependencies": {
     "@types/bluebird": "^3.5.33",

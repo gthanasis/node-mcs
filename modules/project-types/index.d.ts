@@ -1,10 +1,12 @@
-import {WithID} from './generics'
+import {WithID, WithLodashID} from './generics'
 
-export interface ISample {
-    id?: string
+export interface ICar {
+    id: string
     name: string
-    date: string
-    exampleField: string
+    color: string
+    createdAt: string
+    updatedAt: string | null
+    deletedAt: string | null
 }
 
 export interface ISampleDAO {
@@ -14,4 +16,4 @@ export interface ISampleDAO {
     exampleField: string
 }
 
-export { WithID }
+export { WithID, WithLodashID }
