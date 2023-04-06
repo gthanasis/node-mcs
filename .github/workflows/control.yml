@@ -1,8 +1,11 @@
 name: "[Control] build pipeline"
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches: [ "main" ]
-    paths: [ "microservices/control", ".github/**" ]
+#    paths: [ "microservices/control", ".github/**" ]
 jobs:
   test_and_build_lib:
     runs-on: ubuntu-latest

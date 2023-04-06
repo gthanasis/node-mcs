@@ -1,8 +1,11 @@
 name: "[Library] build pipeline"
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches: [ "main" ]
-    paths: [ "modules/**", ".github/**" ]
+#    paths: [ "modules/**", ".github/**" ]
 jobs:
   test_and_build_lib:
     runs-on: ubuntu-latest
