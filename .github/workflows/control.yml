@@ -6,6 +6,8 @@ on:
 jobs:
   test-build-control-msc:
     runs-on: ubuntu-latest
+    env:
+      ACTIONS_STEP_DEBUG: true
 
     steps:
       - name: Checkout code
