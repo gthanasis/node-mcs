@@ -1,4 +1,4 @@
-name: "[Control] build pipeline"
+name: "[Library] build pipeline"
 on:
   push:
     branches:
@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
     paths: [ "modules/library", ".github/**" ]
 jobs:
-  control-test-build:
+  lib-test:
     runs-on: ubuntu-latest
 
     steps:
