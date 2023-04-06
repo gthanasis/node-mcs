@@ -1,9 +1,13 @@
-name: Control MSC build pipeline
+name: "[Control] build pipeline"
 on:
   pull_request:
     branches: [ "main" ]
     paths: [ "microservices/control", ".github/**" ]
 jobs:
+  test_and_build_lib:
+    runs-on: ubuntu-latest
+    include: ./build-test-lib.yml
+
   test_and_build:
     runs-on: ubuntu-latest
 

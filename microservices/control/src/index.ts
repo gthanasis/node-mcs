@@ -2,14 +2,14 @@ import 'source-map-support/register'
 
 import 'dotenv/config'
 import {Logger, BunyanLogger} from 'logger'
-import samples from './routes/samples'
+import carRouteGenerator from './useCases/car/routes'
 
-import {SampleMsc} from './service'
+import {ControlMsc} from './service'
 
 const name = process.env.SERVER_NAME || 'backend'
 const logger: BunyanLogger = new Logger({name: name, level: process.env.LOG_LEVEL}).detach()
 
-const msc = new SampleMsc(
+const msc = new ControlMsc(
     {
         env: process.env.NODE_ENV || 'development',
         host: process.env.HOST || '0.0.0.0',
@@ -21,5 +21,5 @@ const msc = new SampleMsc(
     }
 )
 
-msc.addRouter(samples(msc))
+msc.addRouter(carRouteGenerator(msc))
 msc.start()

@@ -12,9 +12,8 @@ import {
     UnauthorizedError
 } from './libError'
 import OauthTokenManagers from './oauthTokenManager'
-import InMemoryPersistence from './repositories/InMemoryPersistence'
 import IPersistence from './repositories/IPersistence'
-import PostgreSqlPersistence from './repositories/PostgreSqlPersistence'
+import MongoDbPersistence, {MongoQueryOptions} from './repositories/MongoDbPersistence'
 import Jwt from './libJWT'
 
 export {
@@ -34,8 +33,8 @@ export {
     RetryFlowConsumer,
     Producer,
     IPersistence,
-    InMemoryPersistence,
-    Jwt,
-    PostgreSqlPersistence
+    MongoDbPersistence,
+    MongoQueryOptions,
+    Jwt
 }
 

@@ -3,14 +3,16 @@
   "workspaces": {
     "packages": [
       "microservices/*",
-      "modules/*"
+      "modules/*",
+      "tools/*"
     ]
   },
   "scripts": {
     "build:modules": "cd modules && ./build.sh",
     "build:control": "docker build -t control --build-arg BUILD_CONTEXT=control .",
     "run:control": "docker run -p 3001:3001 --name node-mcs_control control",
-    "clean:nodemodules": "rm -rf node_modules && rm -rf **/node_modules && rm -rf **/**/node_modules"
+    "clean:nodemodules": "rm -rf node_modules && rm -rf **/node_modules && rm -rf **/**/node_modules",
+    "generate": "yarn workspace code_generator generate"
   },
   "dependencies": {
   }

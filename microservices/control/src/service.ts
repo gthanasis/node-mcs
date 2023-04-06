@@ -1,14 +1,16 @@
 import 'dotenv/config'
 import Microservice, { ServiceConstructorProps } from 'microservice'
 
-import {InMemoryPersistence} from 'library'
+import {MongoDbPersistence} from 'library'
 
-export class SampleMsc extends Microservice {
-    public persistence: InMemoryPersistence
+export class ControlMsc extends Microservice {
+    public persistence: MongoDbPersistence
 
     constructor (props: ServiceConstructorProps) {
         super(props)
-        this.persistence = new InMemoryPersistence(['samples'])
+        this.persistence = new MongoDbPersistence({
+            connectionString: process.env.MONGO_CONNECTION_STRING as string
+        })
     }
 
     protected async createConnections (): Promise<void> {

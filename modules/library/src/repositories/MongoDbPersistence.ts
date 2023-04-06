@@ -1,11 +1,22 @@
-import {Collection, Db, MongoClient, MongoClientOptions, MongoNetworkError} from 'mongodb'
+import {Db, MongoClient, MongoNetworkError, ObjectID} from 'mongodb'
 import IPersistence, {Order, Pagination, Query} from './IPersistence'
 import {Promise} from 'bluebird'
-import Utils from './utlis'
 import _ from 'lodash'
+import {WithID, WithLodashID} from 'project-types'
 
 type MongoDbConstructorProps = {
     connectionString: string
+}
+
+export type MongoQueryOptions = { query: Query, pagination?: Pagination | null, order?: Order | null, search?: string | null }
+type GetPaginationProps = {
+    page: number
+    pageSize: number
+}
+
+type PageOffsetLimit = {
+    offset: number
+    limit: number
 }
 
 class MongoDbPersistence implements IPersistence {
@@ -35,33 +46,12 @@ class MongoDbPersistence implements IPersistence {
         this.connecting = false
     }
 
-    // Find one by primary _id
-    async find<ReturnType> (id: string, table: string): Promise<ReturnType | null> {
+    async query<ReturnType> (props: MongoQueryOptions & { table: string }): Promise<ReturnType[]> {
+        const { query, table, order, pagination } = props
+        // console.log({ query, table, order, pagination })
         if (!this.db) throw new Error('Mongo not yet connected')
-        const res = await this.db.collection(table).findOne<ReturnType>(
-            { _id: id },
-            {}
-        )
-        return res
-    }
-
-    // Find one by query
-    async findBy<ReturnType> (where: Query, table: string): Promise<ReturnType | null> {
-        where = _.omitBy(where, _.isNil)
-        if (!this.db) throw new Error('Mongo not yet connected')
-        const res = await this.db.collection(table).findOne<ReturnType>(
-            where,
-            {}
-        )
-        return res
-    }
-
-    async findAll<ReturnType> (where: Query[], table: string, order?: Order, pagination?: Pagination, search?: string): Promise<ReturnType[]> {
-        where = where.map(w => _.omitBy(w, _.isNil))
-        if (!this.db) throw new Error('Mongo not yet connected')
-        const normalizedQuery = Utils.normalizeQuery(where)
         const res = await this.db.collection(table)
-        .find<ReturnType>(normalizedQuery, {})
+        .find<ReturnType>(query, {})
         .skip(pagination ? pagination.offset : 0)
         .limit(pagination ? pagination.limit : 0)
         .sort(order ? { [order.field]: order.direction === 'asc' ? 1 : -1 } : { _id: 1 })
@@ -69,41 +59,38 @@ class MongoDbPersistence implements IPersistence {
         return res
     }
 
-    async count (where: Query[], table: string, order?: Order, pagination?: Pagination): Promise<number> {
-        where = where.map(w => _.omitBy(w, _.isNil))
+    async count<ReturnType> (props: MongoQueryOptions & { table: string }): Promise<number> {
+        const { query, table, order, pagination } = props
         if (!this.db) throw new Error('Mongo not yet connected')
-        const normalizedQuery = Utils.normalizeQuery(where)
         const res = await this.db.collection(table)
-        .count(normalizedQuery, {})
+        .find<ReturnType>(query, {})
+        .sort(order ? { [order.field]: order.direction === 'asc' ? 1 : -1 } : { _id: 1 })
+        .count()
         return res
     }
 
-    async create<Model> (modelInstances: Partial<Model>, table: string): Promise<Model> {
+    async create<Model> (modelInstances: Partial<Model>, table: string): Promise<WithLodashID<Model>> {
         if (!this.db) throw new Error('Mongo not yet connected')
         const createRes = await this.db.collection(table).insertOne(modelInstances, {})
-        const res = await this.findBy<Model>({ _id: createRes.insertedId }, table)
+        const res = await this.db.collection(table).findOne<WithLodashID<Model>>({ _id: createRes.insertedId }, {})
         if (res === null) throw new Error(`Could not create model, ${JSON.stringify(modelInstances)}`)
         return res
     }
 
-    async update<Model> (attributes: Record<string, string>, where: Query, table: string): Promise<Model[]> {
+    async update<Model> (attributes: Record<string, string>, where: Query, table: string): Promise<WithLodashID<Model>[]> {
         where = _.omitBy(where, _.isNil)
         if (!this.db) throw new Error('Mongo not yet connected')
         await this.db.collection(table).updateOne(where, { $set: attributes }, {})
-        const res = await this.findAll<Model>([where], table)
+        const res = await this.db.collection(table).find<WithLodashID<Model>>(where, {}).toArray()
         return res
     }
 
-    async delete<ReturnType> (where: Query, table: string): Promise<ReturnType[]> {
+    async delete<Model> (where: Query, table: string): Promise<WithLodashID<Model>[]> {
         where = _.omitBy(where, _.isNil)
         if (!this.db) throw new Error('Mongo not yet connected')
-        const toDelete = await this.findAll<ReturnType>([where], table)
-        const createRes = await this.db.collection(table).deleteMany(where, {})
+        const toDelete = await this.db.collection(table).find<WithLodashID<Model>>(where, {}).toArray()
+        const deleteRes = await this.db.collection(table).deleteMany(where, {})
         return toDelete
-    }
-
-    transformIdField (id: string): any {
-        return id
     }
 
     async connect (): Promise<void> {
@@ -121,6 +108,46 @@ class MongoDbPersistence implements IPersistence {
         if (!(err instanceof MongoNetworkError)) return console.warn(`⛁ MongoDB database connection closed.`)
         if (!this.connecting) setTimeout(() => this.connect.apply(this), 5000)
     }
+
+    resolveId<Type> (obj): Type {
+        const { _id, ...rest } = obj
+        return { id: _id, ...rest }
+    }
+
+    getPagination (props: GetPaginationProps): PageOffsetLimit {
+        const { page, pageSize } = props
+        const offset = (page - 1) * pageSize
+        const limit = pageSize
+        return { offset, limit }
+    }
+    
+    translateQuery (queryParams: Record<string, any>, search?: string | null) {
+        const mongoQuery: any = {}
+
+        for (const [key, value] of Object.entries(queryParams)) {
+            switch (key) {
+                case 'search':
+                    break
+                case 'id':
+                    if (Array.isArray(value)) {
+                        mongoQuery._id = { $in: value.map(ObjectID) }
+                    } else {
+                        mongoQuery._id = ObjectID(value) as number
+                    }
+                    break
+                default:
+                    if (Array.isArray(value)) {
+                        mongoQuery[key] = { $in: value }
+                    } else {
+                        mongoQuery[key] = value
+                    }
+                    break
+            }
+        }
+        if (search) mongoQuery.$text = { $search: search as string }
+        return mongoQuery
+    }
 }
 
 export default MongoDbPersistence
+export { ObjectID }

@@ -1,4 +1,4 @@
-name: Modules lib build pipeline
+name: "[Library] build pipeline"
 on:
   pull_request:
     branches: [ "main" ]
@@ -6,20 +6,4 @@ on:
 jobs:
   test_and_build:
     runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16
-
-      - name: Install dependencies
-        working-directory: .
-        run: yarn ci
-
-      - name: Test library
-        working-directory: ./modules/library
-        run: yarn test
+    include: ./build-test-lib.yml

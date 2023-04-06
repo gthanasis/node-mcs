@@ -1,0 +1,12 @@
+{
+  "name": "code_generator",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "generate": "node generate.js"
+  },
+  "dependencies": {
+    "generate-template-files": "^3.2.1"
+  }
+}
