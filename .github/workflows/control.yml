@@ -7,7 +7,7 @@ on:
 #    branches: [ "main" ]
 #    paths: [ "microservices/control", ".github/**" ]
 jobs:
-  test_and_build:
+  control-test-build:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,7 +21,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: .
-        run: yarn ci
+        run: yarn install --frozen-lockfile
 
       - name: Test library
         working-directory: ./modules/library
