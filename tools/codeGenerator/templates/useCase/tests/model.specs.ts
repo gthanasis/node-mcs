@@ -1,5 +1,5 @@
 import { assert } from 'chai'
-import { __useCase__ } from '../../src/useCases/__useCase__(lowerCase)/model'
+import { __useCase__ } from '../../src/useCases/__useCases__(lowerCase)/model'
 import { BadRequestError } from 'library'
 
 describe('__useCase__', () => {

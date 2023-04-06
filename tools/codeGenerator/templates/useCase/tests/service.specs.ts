@@ -1,7 +1,7 @@
 import { expect, assert } from 'chai'
 import sinon from 'sinon'
-import { __useCase__Service } from '../../src/useCases/__useCase__(lowerCase)/service'
-import { __useCase__Repository } from '../../src/useCases/__useCase__(lowerCase)/repository'
+import { __useCase__Service } from '../../src/useCases/__useCases__(lowerCase)/service'
+import { __useCase__Repository } from '../../src/useCases/__useCases__(lowerCase)/repository'
 import { BunyanLogger } from 'logger'
 import { I__useCase__ } from 'project-types'
 

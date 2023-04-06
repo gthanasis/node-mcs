@@ -49,7 +49,6 @@ export class __useCase__Repository {
     }
 
     async insert (payload: Partial<I__useCase__>): Promise<I__useCase__> {
-        console.log('Calling repo')
         const __useCase__(lowerCase) = await this.persistence.create<I__useCase__>(payload, this.table)
         return __useCase__(lowerCase)
     }

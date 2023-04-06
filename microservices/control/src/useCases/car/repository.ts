@@ -49,7 +49,6 @@ export class CarRepository {
     }
 
     async insert (payload: Partial<ICar>): Promise<ICar> {
-        console.log('Calling repo')
         const car = await this.persistence.create<ICar>(payload, this.table)
         return car
     }
