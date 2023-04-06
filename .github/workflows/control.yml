@@ -28,12 +28,8 @@ jobs:
         working-directory: ./modules
         run: ./build.sh
 
-      - name: Install dependencies
-        working-directory: .
-        run: yarn install
-
       - name: Search for lib
-        working-directory: ./node_modules/library
+        working-directory: ./node_modules/library/dist
         run: ls
 
       - name: Test Control Microservice
