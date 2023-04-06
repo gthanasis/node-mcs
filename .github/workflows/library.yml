@@ -1,8 +1,5 @@
 name: "[Library] build pipeline"
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches: [ "main" ]
     paths: [ "modules/library", ".github/**" ]
