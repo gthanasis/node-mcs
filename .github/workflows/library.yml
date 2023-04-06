@@ -3,9 +3,9 @@ on:
   push:
     branches:
       - main
-#  pull_request:
-#    branches: [ "main" ]
-#    paths: [ "microservices/control", ".github/**" ]
+  pull_request:
+    branches: [ "main" ]
+    paths: [ "modules/library", ".github/**" ]
 jobs:
   control-test-build:
     runs-on: ubuntu-latest
@@ -26,15 +26,3 @@ jobs:
       - name: Test library
         working-directory: ./modules/library
         run: yarn test
-
-      - name: Build modules
-        working-directory: ./modules
-        run: ./build.sh
-
-      - name: Test Control Microservice
-        working-directory: ./microservices/control
-        run: yarn test
-
-      - name: Build docker image
-        working-directory: ./
-        run: docker build -t control --build-arg BUILD_CONTEXT=control .
