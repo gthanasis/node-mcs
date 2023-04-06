@@ -28,9 +28,13 @@ jobs:
         working-directory: ./modules
         run: ./build.sh
 
+      - name: Install dependencies
+        working-directory: .
+        run: yarn install
+
       - name: Search for lib
-        working-directory: ./node_modules
-        run: ls | grep 'library'
+        working-directory: ./node_modules/library
+        run: ls
 
       - name: Test Control Microservice
         working-directory: ./microservices/control
