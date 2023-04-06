@@ -2,7 +2,7 @@ name: "[Control] build pipeline"
 on:
   pull_request:
     branches: [ "main" ]
-    paths: [ "microservices/control", ".github/control.yml" ]
+    paths: [ "microservices/control", ".github/**" ]
 jobs:
   test-build-control-msc:
     runs-on: ubuntu-latest
