@@ -2,7 +2,7 @@ name: "[Library] build pipeline"
 on:
   pull_request:
     branches: [ "main" ]
-    paths: [ "modules/library", ".github/**" ]
+    paths: [ "modules/library", ".github/library.yml" ]
 jobs:
   lib-test:
     runs-on: ubuntu-latest

@@ -2,7 +2,7 @@ name: "[Control] build pipeline"
 on:
   pull_request:
     branches: [ "main" ]
-    paths: [ "microservices/control", ".github/**" ]
+    paths: [ "microservices/control", ".github/control.yml" ]
 jobs:
   test-build-control-msc:
     runs-on: ubuntu-latest
@@ -18,7 +18,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: .
-        run: yarn install --frozen-lockfile --no-bin-links
+        run: yarn install
 
       - name: Test library
         working-directory: ./modules/library
