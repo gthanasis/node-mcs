@@ -4,6 +4,8 @@ on:
     branches: [ "main" ]
     paths: [ "modules/**", ".github/**" ]
 jobs:
-  test_and_build:
+  test_and_build_lib:
     runs-on: ubuntu-latest
-    include: ./build-test-lib.yml
+    steps:
+      - name: Include library build and test job
+        uses: ./build-test-lib.yml
