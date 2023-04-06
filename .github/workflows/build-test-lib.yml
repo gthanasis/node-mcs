@@ -1,3 +1,8 @@
+name: "[Library] Build and test"
+on:
+  pull_request:
+    branches: [ "main" ]
+    paths: [ "modules/**", ".github/**" ]
 jobs:
   build-library:
     runs-on: ubuntu-latest
