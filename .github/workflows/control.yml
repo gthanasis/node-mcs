@@ -28,13 +28,9 @@ jobs:
         working-directory: ./modules
         run: ./build.sh
 
-      - name: Build modules
-        working-directory: ./modules
-        run: ./build.sh
-
-      - name: Check directory
-        working-directory: ./
-        run: ls
+      - name: Search for lib
+        working-directory: ./node_modules
+        run: ls | grep 'library'
 
       - name: Test Control Microservice
         working-directory: ./microservices/control
