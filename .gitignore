@@ -9,6 +9,8 @@ yarn-error.log
 .vscode
 .nyc_output
 
+*/**/.env
+
 */**/yarn-error.log
 *~
 
