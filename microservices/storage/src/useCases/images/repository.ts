@@ -45,16 +45,10 @@ export class ImagesRepository {
             const bucket = this.storage.bucket(this.bucketName)
             const path = `${ImagesRepository.getPath(workspaceId)}/${id}`
 
-            // Debug logs
-            console.log('Bucket Name:', this.bucketName)
-            console.log('Retrieving file from path:', path)
-
             const file = bucket.file(path)
-            console.log('File:', file)
 
             // Check if file exists
             const [exists] = await file.exists()
-            console.log('File exists:', exists) // Log file existence check
             if (!exists) {
                 throw new Error(`Image with ID ${id} not found at path ${path}.`)
             }

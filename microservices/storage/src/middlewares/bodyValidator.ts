@@ -7,7 +7,6 @@ const bodyValidator = (schema: Record<string, unknown>) => async (req: Express.R
     const ajv = new Ajv()
     const validate = ajv.compile(schema)
     const valid = validate(req.body)
-    console.log(req.body)
     const errors = validate && validate.errors ? validate.errors.map(x => {
         const field = x.instancePath.split('/').filter(i => i !== '')
         return `${field.join(' > ')} ${x.message}`
